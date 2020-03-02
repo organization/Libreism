@@ -11,7 +11,8 @@ include_directories(
 )
 
 set(SRC_LIST
-        src/main.cpp)
+        src/main.cpp
+        src/time/Time.cpp)
 
 add_subdirectory(drogon)
 
