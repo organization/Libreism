@@ -47,6 +47,8 @@ namespace libresim::api::v1 {
     void Time::getServerClock(const drogon::HttpRequestPtr& rgeteq, Callback&& callback, std::string&& url) const {
         const auto parsedUrl = parseURI(url);
 
+        const auto timeBegin = std::chrono::steady_clock::now();
+
         namespace beast = boost::beast;
 
         beast::net::io_context ioContext;
@@ -58,23 +60,42 @@ namespace libresim::api::v1 {
 
         stream.connect(results);
 
-        beast::http::request<beast::http::string_body> beastReq{beast::http::verb::get, parsedUrl.query, 11};
+        beast::http::request<beast::http::string_body> beastReq{beast::http::verb::head, parsedUrl.query, 11};
         beastReq.set(beast::http::field::host, parsedUrl.domain);
         beastReq.set(beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
 
-        beast::http::write(stream, beastReq);
+        beast::error_code writeErrorCode;
+        beast::http::write(stream, beastReq, writeErrorCode);
+        if (writeErrorCode) {
+            const auto resp = drogon::HttpResponse::newNotFoundResponse();
+            callback(resp);
+            return;
+        }
 
         beast::flat_buffer buffer;
-        beast::http::response<beast::http::dynamic_body> res;
 
-        beast::http::read(stream, buffer, res);
+        beast::http::response_parser<beast::http::empty_body> parser;
+        parser.skip(true);
 
-        const auto date = res.base()["date"].to_string();
+        beast::error_code readErrorCode;
+
+        beast::http::read(stream, buffer, parser, readErrorCode);
+        if (readErrorCode) {
+            const auto resp = drogon::HttpResponse::newNotFoundResponse();
+            callback(resp);
+            return;
+        }
+
+        const auto date = parser.release().base()["date"].to_string();
+
+        const auto timeEnd = std::chrono::steady_clock::now();
 
         std::tm tm = {};
         std::stringstream ss(date);
         ss >> std::get_time(&tm, "%a, %d %b %Y %H:%M:%S %Z"); // RFC1123
-        const auto unixTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::from_time_t(std::mktime(&tm)).time_since_epoch()).count();
+
+        const auto serverTime = std::chrono::system_clock::from_time_t(std::mktime(&tm)) - (timeEnd - timeBegin);
+        const auto unixTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(serverTime.time_since_epoch()).count();
 
         const auto resp = drogon::HttpResponse::newHttpResponse();
         resp->setBody(std::to_string(unixTimeMs));
