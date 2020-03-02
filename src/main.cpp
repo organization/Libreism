@@ -9,6 +9,6 @@ int main() {
         .addListener("0.0.0.0", 80) //TODO: loadConfigFile("./config.json")
         .setThreadNum(16)
         .enableRunAsDaemon()
-        .registerController(std::make_shared<libresim::api::v1::Time>())
+        .registerController(std::make_shared<libresim::api::v1::TimeHttpController>())
         .run();
 }

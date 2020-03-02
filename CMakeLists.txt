@@ -12,7 +12,8 @@ include_directories(
 
 set(SRC_LIST
         src/main.cpp
-        src/time/Time.cpp)
+        src/time/TimeHttpController.cpp
+        src/time/ntp/NTPClient.cpp)
 
 add_subdirectory(drogon)
 

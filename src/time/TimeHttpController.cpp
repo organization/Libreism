@@ -1,4 +1,5 @@
-#include <libresim/time/Time.h>
+#include <libresim/time/TimeHttpController.h>
+#include <libresim/time/ntp/NTPClient.h>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
@@ -9,8 +10,19 @@
 #include <iomanip>
 
 namespace libresim::api::v1 {
-    void Time::getStandardUnixTime(const drogon::HttpRequestPtr& req, Time::Callback&& callback) const {
-        //TODO
+    void TimeHttpController::getStandardUnixTime(const drogon::HttpRequestPtr& req, TimeHttpController::Callback&& callback) const {
+        const auto timeBegin = std::chrono::steady_clock::now();
+        const auto nistStandardTime = libresim::NTPClient::getInstance().getCurrentTimestamp();
+        const auto timeEnd = std::chrono::steady_clock::now();
+
+        const auto correctionStandardTime = nistStandardTime - (timeEnd - timeBegin);
+        const auto unixTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(correctionStandardTime.time_since_epoch()).count();
+
+        const auto resp = drogon::HttpResponse::newHttpResponse();
+        resp->setBody(std::to_string(unixTimeMs));
+        resp->setExpiredTime(0); // disable cache
+
+        callback(resp);
     }
 
     // Thanks to bsergeev
@@ -44,7 +56,7 @@ namespace libresim::api::v1 {
         return result;
     }
 
-    void Time::getServerClock(const drogon::HttpRequestPtr& rgeteq, Callback&& callback, std::string&& url) const {
+    void TimeHttpController::getServerClock(const drogon::HttpRequestPtr& rgeteq, Callback&& callback, std::string&& url) const {
         const auto parsedUrl = parseURI(url);
 
         const auto timeBegin = std::chrono::steady_clock::now();
@@ -101,6 +113,6 @@ namespace libresim::api::v1 {
         resp->setBody(std::to_string(unixTimeMs));
         resp->setExpiredTime(0); // disable cache
 
-        callback(resp); // TODO: need to apply boost::outcome or try-catch
+        callback(resp);
     }
 }
