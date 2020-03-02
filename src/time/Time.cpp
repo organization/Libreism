@@ -78,8 +78,8 @@ namespace libresim::api::v1 {
 
         const auto resp = drogon::HttpResponse::newHttpResponse();
         resp->setBody(std::to_string(unixTimeMs));
-        resp->setExpiredTime(0); //disable cache
+        resp->setExpiredTime(0); // disable cache
 
-        callback(resp);
+        callback(resp); // TODO: need to apply boost::outcome or try-catch
     }
 }
