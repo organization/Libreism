@@ -1,18 +1,16 @@
 #include <libresim/time/ntp/Packets.h>
 #pragma once
 
-namespace libresim
-{
-    class NTPClient
-    {
+namespace libresim {
+    class NTPClient {
     public:
         static NTPClient& getInstance();
         std::chrono::system_clock::time_point getCurrentTimestamp();
 
-        NTPClient(const NTPClient &) = delete;
-        NTPClient operator=(const NTPClient &) = delete;
-    private:
+        NTPClient(const NTPClient&) = delete;
+        NTPClient operator=(const NTPClient&) = delete;
 
+    private:
         NTPClient();
         ~NTPClient() = default;
 

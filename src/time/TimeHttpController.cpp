@@ -1,13 +1,13 @@
 #include <libresim/time/TimeHttpController.h>
 #include <libresim/time/ntp/NTPClient.h>
+#include <iomanip>
+#include <regex>
+#include <boost/algorithm/string.hpp>
+#include <boost/asio/connect.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/algorithm/string.hpp>
-#include <regex>
-#include <iomanip>
 
 namespace libresim::api::v1 {
     void TimeHttpController::getStandardUnixTime(const drogon::HttpRequestPtr& req, TimeHttpController::Callback&& callback) const {
@@ -29,10 +29,10 @@ namespace libresim::api::v1 {
     // https://github.com/boostorg/beast/issues/787#issuecomment-376259849
     struct ParsedURI {
         std::string protocol;
-        std::string domain;  // only domain must be present
+        std::string domain; // only domain must be present
         std::string port;
         std::string resource;
-        std::string query;   // everything after '?', possibly nothing
+        std::string query; // everything after '?', possibly nothing
     };
 
     ParsedURI parseURI(const std::string& url) {
@@ -48,7 +48,7 @@ namespace libresim::api::v1 {
             result.protocol = value_or(boost::algorithm::to_lower_copy(std::string(match[2])), "http");
             result.domain = match[3];
             const bool is_sequre_protocol = (result.protocol == "https" || result.protocol == "wss");
-            result.port = value_or(match[5], (is_sequre_protocol)? "443" : "80");
+            result.port = value_or(match[5], (is_sequre_protocol) ? "443" : "80");
             result.resource = value_or(match[6], "/");
             result.query = match[8];
             assert(!result.domain.empty());
@@ -72,7 +72,7 @@ namespace libresim::api::v1 {
 
         stream.connect(results);
 
-        beast::http::request<beast::http::string_body> beastReq{beast::http::verb::head, parsedUrl.query, 11};
+        beast::http::request<beast::http::string_body> beastReq{ beast::http::verb::head, parsedUrl.query, 11 };
         beastReq.set(beast::http::field::host, parsedUrl.domain);
         beastReq.set(beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
 
@@ -115,4 +115,4 @@ namespace libresim::api::v1 {
 
         callback(resp);
     }
-}
+} // namespace libresim::api::v1

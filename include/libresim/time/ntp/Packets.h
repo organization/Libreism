@@ -14,10 +14,9 @@ namespace Packets {
     using n_io_service = boost::asio::io_service; //net input\output service
     using tcp = boost::asio::ip::tcp;
     using udp = boost::asio::ip::udp;
-}
+} // namespace Packets
 
-struct TimePacket
-{
+struct TimePacket {
     int8_t flags; // Control byte (8 flags, if necessary, you can control the start / end of the transaction, forwarding when a break, etc.)
 
     // Message command (is a symbol of a handler function)
@@ -27,21 +26,19 @@ struct TimePacket
 };
 
 // Definition of NTP\UDP\IP packet
-struct NtpPacket
-{
-
+struct NtpPacket {
     uint8_t li_vn_mode = 0x1b; // Eight bits. li, vn, and mode.
     // li.   Two bits.   Leap indicator.
     // vn.   Three bits. Version number of the protocol.
     // mode. Three bits. Client will pick mode 3 for client.
 
-    uint8_t stratum{};   // Eight bits. Stratum level of the local clock.
-    uint8_t poll{};      // Eight bits. Maximum interval between successive messages.
+    uint8_t stratum{}; // Eight bits. Stratum level of the local clock.
+    uint8_t poll{}; // Eight bits. Maximum interval between successive messages.
     uint8_t precision{}; // Eight bits. Precision of the local clock.
 
-    uint32_t rootDelay{};      // 32 bits. Total round trip delay time.
+    uint32_t rootDelay{}; // 32 bits. Total round trip delay time.
     uint32_t rootDispersion{}; // 32 bits. Max error aloud from primary clock source.
-    uint32_t refId{};          // 32 bits. Reference clock identifier.
+    uint32_t refId{}; // 32 bits. Reference clock identifier.
 
     uint32_t refTm_s{}; // 32 bits. Reference time-stamp seconds.
     uint32_t refTm_f{}; // 32 bits. Reference time-stamp fraction of a second.
