@@ -20,7 +20,6 @@ namespace libresim::api::v1 {
 
         const auto resp = drogon::HttpResponse::newHttpResponse();
         resp->setBody(std::to_string(unixTimeMs));
-        resp->setExpiredTime(0); // disable cache
 
         callback(resp);
     }
@@ -37,7 +36,7 @@ namespace libresim::api::v1 {
 
     ParsedURI parseURI(const std::string& url) {
         ParsedURI result = ParsedURI();
-        auto value_or = [](const std::string& value, std::string&& deflt) -> std::string {
+        auto value_or = [](const std::string& value, std::string&& deflt) -> auto {
             return (value.empty() ? deflt : value);
         };
         // Note: only "http", "https", "ws", and "wss" protocols are supported
@@ -70,7 +69,14 @@ namespace libresim::api::v1 {
 
         const auto results = resolver.resolve(parsedUrl.domain, parsedUrl.port);
 
-        stream.connect(results);
+        try {
+            stream.connect(results);
+        } catch (const boost::system::system_error& e) {
+            std::cout << e.what() << std::endl;
+            const auto resp = drogon::HttpResponse::newNotFoundResponse();
+            callback(resp);
+            return;
+        }
 
         beast::http::request<beast::http::string_body> beastReq{ beast::http::verb::head, parsedUrl.query, 11 };
         beastReq.set(beast::http::field::host, parsedUrl.domain);
@@ -111,7 +117,6 @@ namespace libresim::api::v1 {
 
         const auto resp = drogon::HttpResponse::newHttpResponse();
         resp->setBody(std::to_string(unixTimeMs));
-        resp->setExpiredTime(0); // disable cache
 
         callback(resp);
     }

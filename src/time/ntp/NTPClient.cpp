@@ -9,14 +9,14 @@ NTPClient::NTPClient() {
     Packets::n_io_service service;
 
     // udp\ntp client config
-    uSocket = std::make_shared<Packets::udp::socket>(service);
+    uSocket = new Packets::udp::socket(service);
 
     try {
         uSocket->open(Packets::udp::v4());
         std::cout << "UDP Client started>\n";
     } catch (const std::exception& e) {
         std::cerr << "Cannot start UDP client:\n"
-                  << e.what() << '\n';
+                  << e.what() << std::endl;
     }
 }
 
@@ -27,7 +27,7 @@ NTPClient& NTPClient::getInstance() {
 
 std::chrono::system_clock::time_point NTPClient::getCurrentTimestamp() {
     // Could create shared_ptr, but there is no context for it.
-    auto* packet = new NtpPacket();
+    auto packet = new NtpPacket();
 
     uSocket->send_to(boost::asio::buffer(packet, 48), ntpServerEP);
 
