@@ -5,8 +5,8 @@ namespace libresim::api::v1 {
     class TimeHttpController : public drogon::HttpController<TimeHttpController, false> {
     public:
         METHOD_LIST_BEGIN
-            METHOD_ADD(TimeHttpController::getStandardUnixTime, "/sttime", drogon::Get); //path is /libresim/api/v1/TimeHttpController/sttime
-            METHOD_ADD(TimeHttpController::getServerClock, "/servtime/{url}", drogon::Get); //path is /libresim/api/v1/TimeHttpController/servtime/{arg1}
+        METHOD_ADD(TimeHttpController::getStandardUnixTime, "/sttime", drogon::Get); //path is /libresim/api/v1/TimeHttpController/sttime
+        METHOD_ADD(TimeHttpController::getServerClock, "/servtime/{url}", drogon::Get); //path is /libresim/api/v1/TimeHttpController/servtime/{arg1}
         METHOD_LIST_END
 
         using Callback = std::function<void(const drogon::HttpResponsePtr&)>;

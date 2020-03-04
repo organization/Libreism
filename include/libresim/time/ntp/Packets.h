@@ -27,7 +27,7 @@ struct TimePacket {
 
 // Definition of NTP\UDP\IP packet
 struct NtpPacket {
-    uint8_t li_vn_mode{0x1b}; // Eight bits. li, vn, and mode.
+    uint8_t li_vn_mode{ 0x1b }; // Eight bits. li, vn, and mode.
     // li.   Two bits.   Leap indicator.
     // vn.   Three bits. Version number of the protocol.
     // mode. Three bits. Client will pick mode 3 for client.
