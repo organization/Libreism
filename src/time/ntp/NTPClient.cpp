@@ -13,8 +13,8 @@ namespace libreism {
     }
 
     /**
-     * RequestDatetime_UNIX()
-     * @Returns long - number of seconds from the Unix Epoch start time
+     * getCurrentTimestamp()
+     * @Returns std::chrono::system_clock::time_point - number of seconds from the Unix Epoch start time
      */
     std::chrono::system_clock::time_point NTPClient::getCurrentTimestamp() {
         time_t timeRecv = 0;
