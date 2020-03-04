@@ -1,4 +1,4 @@
-#include <libresim/time/ntp/NTPClient.h>
+#include <libreism/time/ntp/NTPClient.h>
 
 namespace libreism {
 
