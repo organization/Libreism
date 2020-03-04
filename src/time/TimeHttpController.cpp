@@ -1,5 +1,5 @@
-#include <libresim/time/TimeHttpController.h>
-#include <libresim/time/ntp/NTPClient.h>
+#include <libreism/time/TimeHttpController.h>
+#include <libreism/time/ntp/NTPClient.h>
 #include <iomanip>
 #include <regex>
 #include <boost/algorithm/string.hpp>
@@ -9,10 +9,18 @@
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
 
-namespace libresim::api::v1 {
+namespace libreism::api::v1 {
+    TimeHttpController::TimeHttpController() {
+        _ntpClient = new libreism::NTPClient("time.nist.gov");
+    }
+
+    TimeHttpController::~TimeHttpController() {
+        delete _ntpClient;
+    }
+
     void TimeHttpController::getStandardUnixTime(const drogon::HttpRequestPtr& req, TimeHttpController::Callback&& callback) const {
         const auto timeBegin = std::chrono::steady_clock::now();
-        const auto nistStandardTime = libresim::NTPClient::getInstance().getCurrentTimestamp();
+        const auto nistStandardTime = this->_ntpClient->getCurrentTimestamp();
         const auto timeEnd = std::chrono::steady_clock::now();
 
         const auto correctionStandardTime = nistStandardTime - (timeEnd - timeBegin);
@@ -72,7 +80,7 @@ namespace libresim::api::v1 {
         try {
             stream.connect(results);
         } catch (const boost::system::system_error& e) {
-            std::cout << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
             const auto resp = drogon::HttpResponse::newNotFoundResponse();
             callback(resp);
             return;
@@ -120,4 +128,4 @@ namespace libresim::api::v1 {
 
         callback(resp);
     }
-} // namespace libresim::api::v1
+} // namespace libreism::api::v1

@@ -38,7 +38,7 @@ ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: true
 IncludeBlocks: Merge
 IncludeCategories:
-  - Regex: '<libresim.+>'
+  - Regex: '<libreism.+>'
     Priority: 0
   - Regex: '<[[:alnum:].]+>'
     Priority: 1
