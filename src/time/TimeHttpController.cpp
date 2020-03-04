@@ -11,7 +11,7 @@
 
 namespace libreism::api::v1 {
     TimeHttpController::TimeHttpController() {
-        _ntpClient = new libreism::NTPClient("time.nist.gov");
+        _ntpClient = new libreism::NTPClient("time.bora.net");
     }
 
     TimeHttpController::~TimeHttpController() {
