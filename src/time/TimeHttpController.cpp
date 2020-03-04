@@ -7,6 +7,7 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
+#include <boost/beast/ssl.hpp>
 #include <boost/beast/version.hpp>
 
 namespace libreism::api::v1 {
@@ -37,6 +38,7 @@ namespace libreism::api::v1 {
     struct ParsedURI {
         std::string protocol;
         std::string domain; // only domain must be present
+        bool isSecureProtocol{};
         std::string port;
         std::string resource;
         std::string query; // everything after '?', possibly nothing
@@ -44,7 +46,7 @@ namespace libreism::api::v1 {
 
     ParsedURI parseURI(const std::string& url) {
         ParsedURI result = ParsedURI();
-        auto value_or = [](const std::string& value, std::string&& deflt) -> auto {
+        auto valueOr = [](const std::string& value, std::string&& deflt) -> auto {
             return (value.empty() ? deflt : value);
         };
         // Note: only "http", "https", "ws", and "wss" protocols are supported
@@ -52,22 +54,18 @@ namespace libreism::api::v1 {
                                            std::regex_constants::ECMAScript | std::regex_constants::icase };
         std::smatch match;
         if (std::regex_match(url, match, PARSE_URL) && match.size() == 9) {
-            result.protocol = value_or(boost::algorithm::to_lower_copy(std::string(match[2])), "http");
+            result.protocol = valueOr(boost::algorithm::to_lower_copy(std::string(match[2])), "http");
             result.domain = match[3];
-            const bool is_sequre_protocol = (result.protocol == "https" || result.protocol == "wss");
-            result.port = value_or(match[5], (is_sequre_protocol) ? "443" : "80");
-            result.resource = value_or(match[6], "/");
+            result.isSecureProtocol = (result.protocol == "https" || result.protocol == "wss");
+            result.port = valueOr(match[5], (result.isSecureProtocol) ? "443" : "80");
+            result.resource = valueOr(match[6], "/");
             result.query = match[8];
             assert(!result.domain.empty());
         }
         return result;
     }
 
-    void TimeHttpController::getServerClock(const drogon::HttpRequestPtr& rgeteq, Callback&& callback, std::string&& url) const {
-        const auto parsedUrl = parseURI(url);
-
-        const auto timeBegin = std::chrono::steady_clock::now();
-
+    boost::string_view parseServerTime(const ParsedURI& parsedUrl) {
         namespace beast = boost::beast;
 
         beast::net::io_context ioContext;
@@ -81,9 +79,7 @@ namespace libreism::api::v1 {
             stream.connect(results);
         } catch (const boost::system::system_error& e) {
             std::cerr << e.what() << std::endl;
-            const auto resp = drogon::HttpResponse::newNotFoundResponse();
-            callback(resp);
-            return;
+            return "";
         }
 
         beast::http::request<beast::http::string_body> beastReq{ beast::http::verb::head, parsedUrl.query, 11 };
@@ -93,9 +89,8 @@ namespace libreism::api::v1 {
         beast::error_code writeErrorCode;
         beast::http::write(stream, beastReq, writeErrorCode);
         if (writeErrorCode) {
-            const auto resp = drogon::HttpResponse::newNotFoundResponse();
-            callback(resp);
-            return;
+            std::cerr << writeErrorCode.message() << std::endl;
+            return "";
         }
 
         beast::flat_buffer buffer;
@@ -107,12 +102,86 @@ namespace libreism::api::v1 {
 
         beast::http::read(stream, buffer, parser, readErrorCode);
         if (readErrorCode) {
+            std::cerr << readErrorCode.message() << std::endl;
+            return "";
+        }
+
+        const auto date = parser.release().base()["date"];
+        return date;
+    }
+
+    boost::string_view parseServerTimeSsl(const ParsedURI& parsedUrl) {
+        namespace beast = boost::beast;
+
+        beast::net::io_context ioContext;
+
+        beast::net::ssl::context sslContext(beast::net::ssl::context::tlsv13_client);
+        sslContext.set_default_verify_paths();
+        sslContext.set_verify_mode(beast::net::ssl::verify_none);
+        sslContext.set_options(beast::net::ssl::context::default_workarounds);
+
+        beast::net::ip::tcp::resolver resolver(ioContext);
+        beast::ssl_stream<beast::tcp_stream> stream(ioContext, sslContext);
+
+        if (!SSL_set_tlsext_host_name(stream.native_handle(), parsedUrl.domain.c_str())) {
+            beast::error_code ec{ static_cast<int>(::ERR_get_error()), beast::net::error::get_ssl_category() };
+            std::cerr << ec.message() << std::endl;
+            return "";
+        }
+
+        boost::asio::ip::basic_resolver<boost::asio::ip::tcp, boost::asio::executor>::results_type results;
+        try {
+            results = resolver.resolve(parsedUrl.domain, parsedUrl.port);
+
+            beast::get_lowest_layer(stream).connect(results);
+            stream.handshake(beast::net::ssl::stream_base::client);
+        } catch (const boost::system::system_error& e) {
+            std::cerr << e.what() << std::endl;
+            return "";
+        }
+
+        beast::http::request<beast::http::string_body> beastReq{ beast::http::verb::head, parsedUrl.query, 11 };
+        beastReq.set(beast::http::field::host, parsedUrl.domain);
+        beastReq.set(beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+
+        beast::error_code writeErrorCode;
+        beast::http::write(stream, beastReq, writeErrorCode);
+        if (writeErrorCode) {
+            std::cerr << writeErrorCode.message() << std::endl;
+            return "";
+        }
+
+        beast::flat_buffer buffer;
+
+        beast::http::response_parser<beast::http::empty_body> parser;
+        parser.skip(true);
+
+        beast::error_code readErrorCode;
+
+        beast::http::read(stream, buffer, parser, readErrorCode);
+        if (readErrorCode) {
+            std::cerr << readErrorCode.message() << std::endl;
+            return "";
+        }
+
+        const auto date = parser.release().base()["date"];
+        return date;
+    }
+
+    void TimeHttpController::getServerClock(const drogon::HttpRequestPtr& rgeteq, Callback&& callback, std::string&& url) const {
+        const auto parsedUrl = parseURI(url);
+
+        const auto timeBegin = std::chrono::steady_clock::now();
+
+        boost::string_view dateStringView = parsedUrl.isSecureProtocol ? parseServerTimeSsl(parsedUrl) : parseServerTime(parsedUrl);
+
+        if (dateStringView.empty()) {
             const auto resp = drogon::HttpResponse::newNotFoundResponse();
             callback(resp);
             return;
         }
 
-        const auto date = parser.release().base()["date"].to_string();
+        const auto date = dateStringView.to_string();
 
         const auto timeEnd = std::chrono::steady_clock::now();
 

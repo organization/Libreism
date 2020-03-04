@@ -3,7 +3,7 @@ project(libreism)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(Boost 1.61.0 REQUIRED)
+find_package(Boost 1.66.0 REQUIRED)
 
 include_directories(
         include
