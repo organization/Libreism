@@ -75,9 +75,9 @@ namespace libreism::api::v1 {
         beast::net::ip::tcp::resolver resolver(ioContext);
         beast::tcp_stream stream(ioContext);
 
-        const auto results = resolver.resolve(parsedUrl.domain, parsedUrl.port);
-
+        boost::asio::ip::basic_resolver<boost::asio::ip::tcp, boost::asio::executor>::results_type results;
         try {
+            results = resolver.resolve(parsedUrl.domain, parsedUrl.port);
             stream.connect(results);
         } catch (const boost::system::system_error& e) {
             std::cerr << e.what() << std::endl;
