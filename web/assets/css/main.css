@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+@import url("https://cdn.materialdesignicons.com/5.1.45/css/materialdesignicons.min.css");
+
+head, body {
+	font-family: 'Noto Sans KR', sans-serif;
+	margin: 0;
+}
+
+.libreism-info {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	padding: 30px;
+}
+
+.libreism-info__text {
+	font-weight: bold;
+	font-size: 30px;
+	padding-bottom: 5px;
+}
+
+.libreism-info__bar {
+	width: 65px;
+	border-bottom: 8px black solid;
+}
+
+.main-content__header {
+	display: table;
+	margin: 0 auto;
+}
+
+.main-content {
+	display: inline-flex;
+	justify-content: center;
+	align-content: center;
+	flex-direction: column;
+
+	text-align: center;
+
+	height: 100vh;
+
+	margin: 0 auto;
+}
+
+.main-content__title {
+	font-size: 25px;
+	text-align: left;
+}
+
+.main-content__url {
+	font-weight: bold;
+	font-size: 60px;
+	padding-right: 10px;
+}
+
+.main-content__date {
+	font-weight: bold;
+	font-size: 80px;
+}
+
+.main-content__standard {
+	display: flex;
+	justify-content: space-between;
+
+	font-size: 40px;
+	font-weight: bold;
+}
+
+.main-content__standard_min {
+	flex-grow: .5;
+
+	font-weight: bold;
+	text-align: center;
+}
+
+.main-content__standard_sec {
+	position: relative;
+
+	font-weight: bold;
+	text-align: right;
+}
+
+.main-content__standard_diff {
+	display: flex;
+	align-items: center;
+
+	position: absolute;
+	right: -100px;
+	bottom: 0;
+	top: 0;
+
+	font-size: 20px;
+	font-weight: normal;
+}
+
+.main-content__icons {
+	margin-top: 60px;
+
+	font-weight: bold;
+	text-align: left;
+	font-size: 30px;
+}
