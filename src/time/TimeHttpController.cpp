@@ -24,7 +24,7 @@ namespace libreism::api::v1 {
         const auto nistStandardTime = this->_ntpClient->getCurrentTimestamp();
         const auto timeEnd = std::chrono::steady_clock::now();
 
-        const auto correctionStandardTime = nistStandardTime - (timeEnd - timeBegin);
+        const auto correctionStandardTime = nistStandardTime + (timeEnd - timeBegin);
         const auto unixTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(correctionStandardTime.time_since_epoch()).count();
 
         const auto resp = drogon::HttpResponse::newHttpResponse();
@@ -118,7 +118,7 @@ namespace libreism::api::v1 {
         beast::net::ssl::context sslContext(beast::net::ssl::context::tlsv13_client);
         sslContext.set_default_verify_paths();
         sslContext.set_verify_mode(beast::net::ssl::verify_none);
-        sslContext.set_options(beast::net::ssl::context::default_workarounds);
+        sslContext.set_options(beast::net::ssl::context::default_workarounds | beast::net::ssl::context::no_sslv2 | beast::net::ssl::context::no_sslv3);
 
         beast::net::ip::tcp::resolver resolver(ioContext);
         beast::ssl_stream<beast::tcp_stream> stream(ioContext, sslContext);
@@ -189,12 +189,55 @@ namespace libreism::api::v1 {
         std::stringstream ss(date);
         ss >> std::get_time(&tm, "%a, %d %b %Y %H:%M:%S %Z"); // RFC1123
 
-        const auto serverTime = std::chrono::system_clock::from_time_t(std::mktime(&tm)) - (timeEnd - timeBegin);
+        const auto serverTime = std::chrono::system_clock::from_time_t(std::mktime(&tm)) + (timeEnd - timeBegin);
         const auto unixTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(serverTime.time_since_epoch()).count();
 
         const auto resp = drogon::HttpResponse::newHttpResponse();
         resp->setBody(std::to_string(unixTimeMs));
 
         callback(resp);
+    }
+
+    void TimeHttpController::getServerTimeJson(const drogon::HttpRequestPtr& req, Callback&& callback, std::string&& url) const {
+        const auto parsedUrl = parseURI(url);
+
+        const auto timeBegin = std::chrono::steady_clock::now();
+        const auto nistStandardTime = this->_ntpClient->getCurrentTimestamp();
+
+        boost::string_view dateStringView = parsedUrl.isSecureProtocol ? parseServerTimeSsl(parsedUrl) : parseServerTime(parsedUrl);
+
+        if (dateStringView.empty()) {
+            Json::Value json;
+            json["result"] = false;
+            auto resp = drogon::HttpResponse::newHttpJsonResponse(json);
+
+            callback(resp);
+
+            return;
+        }
+
+        const auto date = dateStringView.to_string();
+
+        std::tm tm = {};
+        std::stringstream ss(date);
+        ss >> std::get_time(&tm, "%a, %d %b %Y %H:%M:%S %Z"); // RFC1123
+
+        const auto timeEnd = std::chrono::steady_clock::now();
+
+        const auto correctionServerTime = std::chrono::system_clock::from_time_t(std::mktime(&tm)) + (timeEnd - timeBegin);
+        const auto serverUnixTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(correctionServerTime.time_since_epoch()).count();
+
+        const auto correctionStandardTime = nistStandardTime + (timeEnd - timeBegin);
+        const auto standardUnixTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(correctionStandardTime.time_since_epoch()).count();
+
+        Json::Value json;
+        json["result"] = true;
+        json["server_time"] = serverUnixTimeMs;
+        json["standard_time"] = standardUnixTimeMs;
+
+        auto resp = drogon::HttpResponse::newHttpJsonResponse(json);
+        callback(resp);
+
+        return;
     }
 } // namespace libreism::api::v1
