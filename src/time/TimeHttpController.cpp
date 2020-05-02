@@ -224,20 +224,18 @@ namespace libreism::api::v1 {
 
         const auto timeEnd = std::chrono::steady_clock::now();
 
-        const auto correctionServerTime = std::chrono::system_clock::from_time_t(std::mktime(&tm)) + (timeEnd - timeBegin);
-        const auto serverUnixTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(correctionServerTime.time_since_epoch()).count();
-
-        const auto correctionStandardTime = nistStandardTime + (timeEnd - timeBegin);
-        const auto standardUnixTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(correctionStandardTime.time_since_epoch()).count();
+        const auto serverTime = std::chrono::system_clock::from_time_t(std::mktime(&tm)) + (timeEnd - timeBegin);
+        const auto serverUnixTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(serverTime.time_since_epoch()).count();
+        const auto standardUnixTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(nistStandardTime.time_since_epoch()).count();
+        const auto networkLatency = std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeBegin).count();
 
         Json::Value json;
         json["result"] = true;
         json["server_time"] = serverUnixTimeMs;
         json["standard_time"] = standardUnixTimeMs;
+        json["network_latency"] = networkLatency;
 
         auto resp = drogon::HttpResponse::newHttpJsonResponse(json);
         callback(resp);
-
-        return;
     }
 } // namespace libreism::api::v1
