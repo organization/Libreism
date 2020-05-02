@@ -6,6 +6,7 @@
 			</div>
 			<div v-else-if="servTime === null && standardTime === null">
 				시간을 가져올 수 없어요
+				<!-- TODO: add progress bar -->
 			</div>
 			<div v-else>
 				<div class="main-content__title">
@@ -61,7 +62,7 @@
 
 				try {
 					let prev = Date.now();
-					let res = (await axios.get(`${location.origin}:8080/libreism/api/v1/TimeHttpController/timejson?url=${this.servURL}`)).data;
+					let res = (await axios.get(`${location.protocol}//${location.hostname}:8080/libreism/api/v1/TimeHttpController/timejson?url=${this.servURL}`)).data;
 
 					let diff = Date.now() - prev;
 

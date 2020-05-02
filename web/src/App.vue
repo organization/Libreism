@@ -5,8 +5,6 @@
 			<div class="libreism-info__bar"></div>
 		</nav>
 		<router-view></router-view>
-		<!--<div @click="$router.push({path: '/naver1.com'})">naver1.com</div>
-		<div @click="$router.push({path: '/naver2.com'})">naver2.com</div>-->
 	</div>
 </template>
 
