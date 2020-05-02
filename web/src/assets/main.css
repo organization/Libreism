@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
 @import url("https://cdn.materialdesignicons.com/5.1.45/css/materialdesignicons.min.css");
 
 head, body {
@@ -11,13 +11,17 @@ head, body {
 	top: 0;
 	left: 0;
 
-	padding: 30px;
+	margin: 30px;
 }
 
 .libreism-info__text {
-	font-weight: bold;
+	font-weight: 700;
 	font-size: 30px;
+
+	cursor: pointer;
+
 	padding-bottom: 5px;
+	margin-left: -2.7px;
 }
 
 .libreism-info__bar {
@@ -49,55 +53,47 @@ head, body {
 }
 
 .main-content__url {
-	font-weight: bold;
 	font-size: 60px;
 	padding-right: 10px;
+	font-weight: 700;
 }
 
-.main-content__date {
-	font-weight: bold;
-	font-size: 80px;
-}
-
-.main-content__standard {
+.main-content__content {
 	display: flex;
+	flex-direction: row;
 	justify-content: space-between;
-
-	font-size: 40px;
-	font-weight: bold;
 }
 
-.main-content__standard_min {
-	flex-grow: .5;
-
-	font-weight: bold;
-	text-align: center;
-}
-
-.main-content__standard_sec {
-	position: relative;
-
-	font-weight: bold;
-	text-align: right;
-}
-
-.main-content__standard_diff {
+.main-content__time {
 	display: flex;
+	text-align: right;
+	flex-direction: column;
+	padding-right: 20px;
+}
+
+.main-content__time:nth-last-child(1) {
+	padding-right: 0;
+}
+
+.main-content__server_time {
+	font-size: 80px;
+	font-weight: 700;
+}
+
+.main-content__standard_time {
+	font-size: 45px;
+	font-weight: 700;
+}
+
+.main-content__time_diff {
+	display: inline-flex;
 	align-items: center;
 
 	position: absolute;
-	right: -100px;
-	bottom: 0;
 	top: 0;
+	bottom: 0;
+	padding-left: 40px;
 
 	font-size: 20px;
-	font-weight: normal;
-}
-
-.main-content__icons {
-	margin-top: 60px;
-
-	font-weight: bold;
-	text-align: left;
-	font-size: 30px;
+	width: 100%;
 }
