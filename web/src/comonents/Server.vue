@@ -3,10 +3,10 @@
 		<section class="main-content">
 			<div v-if="pending">
 				시간을 가져오는 중이에요
+				<!-- TODO: add progress bar -->
 			</div>
 			<div v-else-if="servTime === null && standardTime === null">
 				시간을 가져올 수 없어요
-				<!-- TODO: add progress bar -->
 			</div>
 			<div v-else>
 				<div class="main-content__title">
@@ -61,13 +61,11 @@
 				this.pending = true;
 
 				try {
-					let prev = Date.now();
 					let res = (await axios.get(`${location.protocol}//${location.hostname}:8080/libreism/api/v1/TimeHttpController/timejson?url=${this.servURL}`)).data;
+					let diff = res.network_latency;
 
-					let diff = Date.now() - prev;
-
-					this.servTime = new Date(res.server_time / 1000 + diff + 1000 * 3600 * 9);
-					this.standardTime = new Date(res.standard_time / 1000 + diff);
+					this.servTime = new Date(res.server_time + diff + 1000 * 3600 * 9);
+					this.standardTime = new Date(res.standard_time + diff);
 
 					if (isNaN(this.servTime) || isNaN(this.standardTime)) throw new Error();
 				} catch (e) {

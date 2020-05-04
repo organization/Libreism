@@ -10,14 +10,7 @@
 
 <script>
 	export default {
-		name: "App",
-		data() {
-			return {
-				standardTime: null,
-				servTime: null,
-				servURL: null
-			}
-		}
+		name: "App"
 	};
 </script>
 
