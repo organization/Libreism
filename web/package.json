@@ -1,22 +1,44 @@
 {
-  "name": "libresim",
+  "name": "libreism-web",
   "version": "0.1.0",
-  "private": true,
+  "description": "Open Source Server time viewer written in C++",
+  "keywords": [
+    "vue",
+    "vue-web",
+    "server-timestamp",
+    "server-time"
+  ],
+  "homepage": "https://github.com/organization/Libreism#readme",
+  "bugs": {
+    "url": "https://github.com/organization/Libreism/issues"
+  },
+  "license": "Apache-2.0",
+  "contributors": [
+    "Seungjae Park <astro.psj@gmail.com>",
+    "Chansol Park <sorisem4106@naver.com>",
+    "JellyBrick <shlee1503@naver.com>"
+  ],
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/organization/Libreism.git"
+  },
   "scripts": {
-    "serve": "vue-cli-service serve --port 80",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "serve": "vue-cli-service serve --port 80"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
-    "vue-router": "^3.1.6",
-    "axios": "^0.19.2"
+    "vue-router": "^3.3.4"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.3.1",
-    "@vue/cli-service": "^4.3.1",
+    "@vue/cli-plugin-babel": "^4.4.6",
+    "@vue/cli-service": "^4.4.6",
     "vue-template-compiler": "^2.6.11"
   },
+  "private": true,
   "browserslist": [
     "> 1%",
     "last 2 versions",
