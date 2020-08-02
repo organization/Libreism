@@ -1,24 +1,21 @@
 cmake_minimum_required(VERSION 3.15)
-project(libreism)
+
+project(libreism
+        VERSION 0.1.0
+        DESCRIPTION "Open Source Server time viewer written in C++"
+        HOMEPAGE_URL https://github.com/organization/Libreism
+        LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(Boost 1.66.0 REQUIRED)
+# Boost headers only
+find_package(Boost 1.73 REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
 
-include_directories(
-        include
-        ${Boost_INCLUDE_DIRS}
-)
+# Libreism
+include_directories(include)
+add_subdirectory(src)
 
-set(SRC_LIST
-        src/main.cpp
-        src/time/TimeHttpController.cpp
-        src/time/ntp/NTPClient.cpp)
-
+# Drogon
 add_subdirectory(drogon)
-
-add_executable(${PROJECT_NAME}
-        ${SRC_LIST})
-
-target_link_libraries(${PROJECT_NAME}
-        PRIVATE drogon)
+target_link_libraries(${PROJECT_NAME} PRIVATE drogon)
