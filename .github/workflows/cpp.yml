@@ -1,0 +1,28 @@
+name: C++
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libjsoncpp-dev libssl-dev openssl uuid-dev zlib1g-dev
+
+      - name: Run CMake
+        run: |
+          cmake -S . -B build
+          cmake --build build
