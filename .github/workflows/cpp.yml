@@ -10,6 +10,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      BOOST_ROOT: /usr/local/share/boost/1.72.0
 
     steps:
       - name: Checkout sources
@@ -20,9 +22,9 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libjsoncpp-dev libssl-dev openssl uuid-dev zlib1g-dev
+          sudo apt-get install libjsoncpp-dev uuid-dev
 
       - name: Run CMake
         run: |
           cmake -S . -B build
-          cmake --build build
+          cmake --build build -j 2
