@@ -9,7 +9,7 @@ project(libreism
 set(CMAKE_CXX_STANDARD 17)
 
 # Boost headers only
-find_package(Boost 1.73 REQUIRED)
+find_package(Boost 1.66 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # Libreism
