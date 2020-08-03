@@ -10,8 +10,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    env:
-      BOOST_ROOT: /usr/local/share/boost/1.72.0
 
     steps:
       - name: Checkout sources
@@ -26,5 +24,6 @@ jobs:
 
       - name: Run CMake
         run: |
+          echo "::set-env name=BOOST_ROOT::$BOOST_ROOT_1_72_0"
           cmake -S . -B build
           cmake --build build -j 2
