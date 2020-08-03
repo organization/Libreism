@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Search from "./comonents/Search";
-import Server from "./comonents/Server";
+import Search from "./components/Search";
+import Server from "./components/Server";
 
 Vue.use(Router)
 
