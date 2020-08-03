@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 project(libreism
         VERSION 0.1.0
-        DESCRIPTION "Open Source Server time viewer written in C++"
+        DESCRIPTION "Open Source Server Time Viewer written in C++"
         HOMEPAGE_URL https://github.com/organization/Libreism
         LANGUAGES CXX)
 

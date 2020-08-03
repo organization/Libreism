@@ -1,7 +1,7 @@
 {
   "name": "libreism-web",
   "version": "0.1.0",
-  "description": "Open Source Server time viewer written in C++",
+  "description": "Open Source Server Time Viewer written in C++",
   "keywords": [
     "vue",
     "vue-web",
