@@ -168,7 +168,7 @@ namespace libreism::api::v1 {
         return date;
     }
 
-    void TimeHttpController::getServerClock(const drogon::HttpRequestPtr& rgeteq, Callback&& callback, std::string&& url) const {
+    void TimeHttpController::getServerTime(const drogon::HttpRequestPtr& rgeteq, Callback&& callback, std::string&& url) const {
         const auto parsedUrl = parseURI(url);
 
         const auto timeBegin = std::chrono::steady_clock::now();
