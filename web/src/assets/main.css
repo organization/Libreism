@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
 @import url("https://cdn.materialdesignicons.com/5.1.45/css/materialdesignicons.min.css");
+@import url("//cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css");
+
 
 head, body {
 	font-family: 'Noto Sans KR', sans-serif;
