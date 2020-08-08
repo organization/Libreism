@@ -236,6 +236,7 @@ namespace libreism::api::v1 {
         json["network_latency"] = networkLatency;
 
         auto resp = drogon::HttpResponse::newHttpJsonResponse(json);
+        resp->addHeader("Access-Control-Allow-Origin", "https://time.zvz.be");
         callback(resp);
     }
 } // namespace libreism::api::v1
