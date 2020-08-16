@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  app_api:
+    build: .
+    ports:
+      - 8080:8080
+    networks:
+      - backend
+    restart: on-failure
+
+  app_static:
+    build: ./web
+    volumes:
+      - static_volume:/usr/src/libreism/dist
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - app_api
+    volumes:
+      - ./web/nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/usr/src/libreism/www
+    networks:
+      - backend
+    restart: on-failure
+
+volumes:
+  static_volume:
+
+networks:
+  backend:
