@@ -136,7 +136,3 @@ _deps
 ### CMake Patch ###
 # External projects
 *-prefix/
-
-### Node.js ###
-web/node_modules/
-web/dist/
