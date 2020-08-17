@@ -8,7 +8,9 @@
 [![GitHub Workflow](https://img.shields.io/github/workflow/status/organization/Libreism/C++?logo=github&logoColor=white&style=for-the-badge)](https://github.com/organization/Libreism/actions)
 [![License](https://img.shields.io/github/license/organization/Libreism?style=for-the-badge)](./LICENSE)
 
-## Requirement
+## Build - API Server
+
+### Requirement
 
 - C++ 17
 - CMake(>=3.15)
@@ -22,7 +24,7 @@
 
 More information about Drogon Installation, see [Drogon Wiki](https://github.com/an-tao/drogon/wiki/02-Installation).
 
-## Build
+### Guide
 
 1. Clone the repository:
 
@@ -39,6 +41,10 @@ More information about Drogon Installation, see [Drogon Wiki](https://github.com
     ```
 
     See [How to build a project](https://cliutils.gitlab.io/modern-cmake/chapters/intro/running.html)
+
+## Build - Static Page
+
+See [Libreism Web](./web/README.md)
 
 ## License
 
