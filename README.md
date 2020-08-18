@@ -8,6 +8,26 @@
 [![GitHub Workflow](https://img.shields.io/github/workflow/status/organization/Libreism/C++?logo=github&logoColor=white&style=for-the-badge)](https://github.com/organization/Libreism/actions)
 [![License](https://img.shields.io/github/license/organization/Libreism?style=for-the-badge)](./LICENSE)
 
+## ChangeLog
+
+See [CHANGELOG](./CHANGELOG.md)
+
+## Run with [Docker Compose](https://docs.docker.com/compose/)(Recommendation)
+
+- Build and run all services:
+
+    ```bash
+    $ docker-compose up
+    ```
+
+- Re-build specific service:
+
+    ```bash
+    $ docker-compose build ${SERVICE_NAME}
+    ```
+
+    See [docker-compose.yml](./docker-compose.yml)
+
 ## Build - API Server
 
 ### Requirement
