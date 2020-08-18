@@ -225,18 +225,18 @@ namespace libreism::api::v1 {
         const auto timeEnd = std::chrono::steady_clock::now();
 
         const auto serverTime = std::chrono::system_clock::from_time_t(std::mktime(&tm)) + (timeEnd - timeBegin);
-        const int serverUnixTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(serverTime.time_since_epoch()).count();
-        const int standardUnixTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(nistStandardTime.time_since_epoch()).count();
-        const int networkLatency = std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeBegin).count();
+        const auto serverUnixTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(serverTime.time_since_epoch()).count();
+        const auto standardUnixTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(nistStandardTime.time_since_epoch()).count();
+        const auto networkLatency = std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeBegin).count();
 
         Json::Value json;
         json["result"] = true;
-        json["server_time"] = serverUnixTimeMs;
-        json["standard_time"] = standardUnixTimeMs;
-        json["network_latency"] = networkLatency;
+        json["server_time"] = Json::Value::Int64(serverUnixTimeMs);
+        json["standard_time"] = Json::Value::Int64(standardUnixTimeMs);
+        json["network_latency"] = Json::Value::Int64(networkLatency);
 
         auto resp = drogon::HttpResponse::newHttpJsonResponse(json);
-        resp->addHeader("Access-Control-Allow-Origin", "https://time.zvz.be");
+        resp->addHeader("Access-Control-Allow-Origin", "*");
         callback(resp);
     }
 } // namespace libreism::api::v1
