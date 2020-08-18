@@ -1,6 +1,7 @@
 ### C++ ###
 # Prerequisites
 *.d
+!conf.d
 
 # Compiled Object files
 *.slo
