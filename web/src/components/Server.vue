@@ -52,7 +52,7 @@
 		},
 		methods: {
 			refreshURL(to) {
-				this.servURL = to.path.split("/")[1];
+				this.servURL = to.path.split("/").slice(1).join("/");
 				this.fetchTime();
 			},
 			async fetchTime() {
