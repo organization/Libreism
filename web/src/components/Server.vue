@@ -61,7 +61,7 @@
 				this.pending = true;
 
 				try {
-					let res = (await axios.get(`${location.protocol}//${location.hostname}:8080/libreism/api/v1/TimeHttpController/timejson?url=${this.servURL}`)).data;
+					let res = (await axios.get(`${location.protocol}//${location.hostname}/get/libreism/api/v1/TimeHttpController/timejson?url=${this.servURL}`)).data;
 					let diff = res.network_latency;
 
 					this.servTime = new Date(res.server_time + diff + 1000 * 3600 * 9);
