@@ -1,0 +1,41 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['cpp', 'javascript']
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libboost-dev libjsoncpp-dev uuid-dev
+
+      - name: Run CMake
+        run: |
+          cmake -S . -B build
+          cmake --build build -j 2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
