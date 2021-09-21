@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "axios": "^0.21.4",
-    "caniuse-lite": "^1.0.30001258",
+    "caniuse-lite": "^1.0.30001259",
     "chokidar": "^3.5.2",
     "core-js": "^3.18.0",
     "vue": "^2.6.14",
