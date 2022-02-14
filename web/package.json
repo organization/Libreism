@@ -28,7 +28,7 @@
     "serve": "vue-cli-service serve --port 3447"
   },
   "dependencies": {
-    "axios": "^0.25.0",
+    "axios": "^0.26.0",
     "caniuse-lite": "^1.0.30001312",
     "chokidar": "^3.5.3",
     "core-js": "^3.21.0",
