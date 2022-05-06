@@ -33,7 +33,7 @@
     "chokidar": "^3.5.3",
     "core-js": "^3.22.3",
     "vue": "^3.2.33",
-    "vue-router": "^4.0.14"
+    "vue-router": "^4.0.15"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.4",
