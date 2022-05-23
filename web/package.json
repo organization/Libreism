@@ -32,7 +32,7 @@
     "caniuse-lite": "^1.0.30001341",
     "chokidar": "^3.5.3",
     "core-js": "^3.22.5",
-    "vue": "^3.2.33",
+    "vue": "^3.2.36",
     "vue-router": "^4.0.15"
   },
   "devDependencies": {
